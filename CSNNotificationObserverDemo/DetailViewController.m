@@ -7,8 +7,10 @@
 //
 
 #import "DetailViewController.h"
+#import "CSNNotificationObserver.h"
 
 @interface DetailViewController ()
+@property (nonatomic, strong) CSNNotificationObserver *notificationObserver;
 - (void)configureView;
 @end
 
@@ -40,6 +42,8 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     [self configureView];
+    
+    self.notificationObserver = [[CSNNotificationObserver alloc] initWithObserver:self selector:@selector(receiveNotification:) name:nil object:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -48,4 +52,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)receiveNotification:(NSNotification *)notification
+{
+    NSLog(@"%s %@", __PRETTY_FUNCTION__, notification);
+}
 @end
