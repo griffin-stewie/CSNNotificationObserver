@@ -9,41 +9,21 @@
 #import "DetailViewController.h"
 #import "CSNNotificationObserver.h"
 
+static NSString * const kTestNotificationName = @"UIApplicationWillChangeStatusBarFrameNotification";
+
 @interface DetailViewController ()
 @property (nonatomic, strong) CSNNotificationObserver *notificationObserver;
-- (void)configureView;
 @end
 
 @implementation DetailViewController
 
 #pragma mark - Managing the detail item
 
-- (void)setDetailItem:(id)newDetailItem
-{
-    if (_detailItem != newDetailItem) {
-        _detailItem = newDetailItem;
-        
-        // Update the view.
-        [self configureView];
-    }
-}
-
-- (void)configureView
-{
-    // Update the user interface for the detail item.
-
-    if (self.detailItem) {
-        self.detailDescriptionLabel.text = [self.detailItem description];
-    }
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    [self configureView];
-    
-    self.notificationObserver = [[CSNNotificationObserver alloc] initWithObserver:self selector:@selector(receiveNotification:) name:nil object:nil];
+
+    self.notificationObserver = [[CSNNotificationObserver alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -52,8 +32,30 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)addObserverAction:(id)sender
+{
+    [self.notificationObserver addObserver:self selector:@selector(receiveNotification:) name:kTestNotificationName object:nil];
+}
+
+- (IBAction)removeObserverAction:(id)sender
+{
+    [self.notificationObserver removeObserver:self name:kTestNotificationName object:nil];
+}
+
+- (IBAction)addObserverBlockAction:(id)sender
+{
+    [self.notificationObserver addObserverForName:kTestNotificationName object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        NSLog(@"%s Block Support: %@", __PRETTY_FUNCTION__, notification);
+    }];
+}
+
+- (IBAction)removeObserverBlockAction:(id)sender
+{
+    [self.notificationObserver removeObserverByName:kTestNotificationName];
+}
+
 - (void)receiveNotification:(NSNotification *)notification
 {
-    NSLog(@"%s %@", __PRETTY_FUNCTION__, notification);
+    NSLog(@"%s Selector Support: %@", __PRETTY_FUNCTION__, notification);
 }
 @end
