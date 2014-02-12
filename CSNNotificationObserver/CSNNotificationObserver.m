@@ -79,36 +79,36 @@
 
 #pragma mark - Block Support
 
-- (instancetype)initWithName:(NSString *)name
+- (instancetype)initWithName:(NSString *)notificationName
                       object:(id)notificationSender
                        queue:(NSOperationQueue *)queue
                   usingBlock:(void (^)(NSNotification *notification))block
 {
     self = [self initWithNotificationCenter:[NSNotificationCenter defaultCenter]];
     if (self) {
-        [self addObserverForName:name object:notificationSender queue:queue usingBlock:block];
+        [self addObserverForName:notificationName object:notificationSender queue:queue usingBlock:block];
     }
 
     return self;
 }
 
-- (void)addObserverForName:(NSString *)name
+- (void)addObserverForName:(NSString *)notificationName
                     object:(id)notificationSender
                      queue:(NSOperationQueue *)queue
                 usingBlock:(void (^)(NSNotification *notification))block
 {
-    id <NSCopying> key = [self keyByName:name];
+    id <NSCopying> key = [self keyByName:notificationName];
     if (key) {
-        [self removeObserverByName:name];
+        [self removeObserverByName:notificationName];
     }
     
-    id observer = [self.notificationCenter addObserverForName:name object:notificationSender queue:queue usingBlock:block];
-    [self.mappingDictionary setObject:observer forKey:[self keyByName:name]];
+    id observer = [self.notificationCenter addObserverForName:notificationName object:notificationSender queue:queue usingBlock:block];
+    [self.mappingDictionary setObject:observer forKey:[self keyByName:notificationName]];
 }
 
-- (void)removeObserverByName:(NSString *)name
+- (void)removeObserverByName:(NSString *)notificationName
 {
-    id <NSCopying> key = [self keyByName:name];
+    id <NSCopying> key = [self keyByName:notificationName];
     id observer = [self.mappingDictionary objectForKey:key];
     [self.mappingDictionary removeObjectForKey:key];
     [self.notificationCenter removeObserver:observer];
