@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "CSNNotificationObserver"
-  s.version      = "0.0.1"
+  s.version      = "0.9.1"
   s.summary      = "CSNNotificationObserver is wrapping NSNotification for convenience."
   s.homepage     = "https://github.com/griffin-stewie/CSNNotificationObserver"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
