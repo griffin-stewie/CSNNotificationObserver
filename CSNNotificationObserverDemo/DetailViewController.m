@@ -22,14 +22,21 @@ static NSString * const kTestNotificationName = @"UIApplicationWillChangeStatusB
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    self.notificationObserver = [[CSNNotificationObserver alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (CSNNotificationObserver *)notificationObserver
+{
+    if (_notificationObserver == nil) {
+        _notificationObserver = [[CSNNotificationObserver alloc] init];
+    }
+    
+    return _notificationObserver;
 }
 
 - (IBAction)addObserverAction:(id)sender
@@ -57,5 +64,10 @@ static NSString * const kTestNotificationName = @"UIApplicationWillChangeStatusB
 - (void)receiveNotification:(NSNotification *)notification
 {
     NSLog(@"%s Selector Support: %@", __PRETTY_FUNCTION__, notification);
+}
+
+- (IBAction)removeNotificationObserver:(id)sender
+{
+    self.notificationObserver = nil;
 }
 @end

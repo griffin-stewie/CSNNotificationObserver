@@ -9,6 +9,7 @@
 #import "CSNNotificationObserver.h"
 
 @interface CSNNotificationObserver ( )
+@property (nonatomic, strong) NSHashTable *mappingHashTable;
 @property (nonatomic, strong) NSMutableDictionary *mappingDictionary;
 @property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 @end
@@ -29,6 +30,7 @@
 {
     self = [super init];
     if (self) {
+        self.mappingHashTable = [NSHashTable weakObjectsHashTable];
         self.mappingDictionary = [NSMutableDictionary dictionary];
         self.notificationCenter = notificationCenter;
     }
@@ -54,7 +56,9 @@
 
 - (void)dealloc
 {
-    [self.notificationCenter removeObserver:self];
+    for (id observer in self.mappingHashTable) {
+        [self.notificationCenter removeObserver:observer];
+    }
     
     for (id observer in [self.mappingDictionary allValues]) {
         [self.notificationCenter removeObserver:observer];
@@ -67,6 +71,7 @@
              object:(id)notificationSender
 {
     [self.notificationCenter addObserver:notificationObserver selector:notificationSelector name:notificationName object:notificationSender];
+    [self.mappingHashTable addObject:notificationObserver];
 }
 
 - (void)removeObserver:(id)notificationObserver
@@ -74,6 +79,7 @@
                 object:(id)notificationSender
 {
     [self.notificationCenter removeObserver:notificationObserver name:notificationName object:notificationSender];
+    [self.mappingHashTable removeObject:notificationObserver];
 }
 
 

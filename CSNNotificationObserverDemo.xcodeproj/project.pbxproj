@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		052253BCA24C472288A4AC8F /* libPods-CSNNotificationObserverDemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A00B66B09554D51B22468E3 /* libPods-CSNNotificationObserverDemoTests.a */; };
 		E36E3BEB18A928A1000CBA97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E36E3BEA18A928A1000CBA97 /* Foundation.framework */; };
 		E36E3BED18A928A1000CBA97 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E36E3BEC18A928A1000CBA97 /* CoreGraphics.framework */; };
 		E36E3BEF18A928A1000CBA97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E36E3BEE18A928A1000CBA97 /* UIKit.framework */; };
@@ -37,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A00B66B09554D51B22468E3 /* libPods-CSNNotificationObserverDemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CSNNotificationObserverDemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DC9F47AF01149C09124E0DC /* Pods-CSNNotificationObserverDemoTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CSNNotificationObserverDemoTests.xcconfig"; path = "Pods/Pods-CSNNotificationObserverDemoTests.xcconfig"; sourceTree = "<group>"; };
 		E36E3BE718A928A1000CBA97 /* CSNNotificationObserverDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CSNNotificationObserverDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E36E3BEA18A928A1000CBA97 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E36E3BEC18A928A1000CBA97 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -80,6 +83,7 @@
 				E36E3C0D18A928A2000CBA97 /* XCTest.framework in Frameworks */,
 				E36E3C0F18A928A2000CBA97 /* UIKit.framework in Frameworks */,
 				E36E3C0E18A928A2000CBA97 /* Foundation.framework in Frameworks */,
+				052253BCA24C472288A4AC8F /* libPods-CSNNotificationObserverDemoTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +98,7 @@
 				E36E3C1218A928A2000CBA97 /* CSNNotificationObserverDemoTests */,
 				E36E3BE918A928A1000CBA97 /* Frameworks */,
 				E36E3BE818A928A1000CBA97 /* Products */,
+				3DC9F47AF01149C09124E0DC /* Pods-CSNNotificationObserverDemoTests.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -113,6 +118,7 @@
 				E36E3BEC18A928A1000CBA97 /* CoreGraphics.framework */,
 				E36E3BEE18A928A1000CBA97 /* UIKit.framework */,
 				E36E3C0C18A928A2000CBA97 /* XCTest.framework */,
+				1A00B66B09554D51B22468E3 /* libPods-CSNNotificationObserverDemoTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -195,9 +201,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E36E3C1F18A928A2000CBA97 /* Build configuration list for PBXNativeTarget "CSNNotificationObserverDemoTests" */;
 			buildPhases = (
+				9F59B4DA7C1545158C7877B2 /* Check Pods Manifest.lock */,
 				E36E3C0718A928A2000CBA97 /* Sources */,
 				E36E3C0818A928A2000CBA97 /* Frameworks */,
 				E36E3C0918A928A2000CBA97 /* Resources */,
+				EFDB54C197AE4D78AC8B05DC /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -262,6 +270,39 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9F59B4DA7C1545158C7877B2 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		EFDB54C197AE4D78AC8B05DC /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-CSNNotificationObserverDemoTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E36E3BE318A928A1000CBA97 /* Sources */ = {
@@ -403,6 +444,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CSNNotificationObserverDemo/CSNNotificationObserverDemo-Prefix.pch";
 				INFOPLIST_FILE = "CSNNotificationObserverDemo/CSNNotificationObserverDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -416,6 +458,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CSNNotificationObserverDemo/CSNNotificationObserverDemo-Prefix.pch";
 				INFOPLIST_FILE = "CSNNotificationObserverDemo/CSNNotificationObserverDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -423,6 +466,7 @@
 		};
 		E36E3C2018A928A2000CBA97 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DC9F47AF01149C09124E0DC /* Pods-CSNNotificationObserverDemoTests.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CSNNotificationObserverDemo.app/CSNNotificationObserverDemo";
@@ -446,6 +490,7 @@
 		};
 		E36E3C2118A928A2000CBA97 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DC9F47AF01149C09124E0DC /* Pods-CSNNotificationObserverDemoTests.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CSNNotificationObserverDemo.app/CSNNotificationObserverDemo";
@@ -482,6 +527,7 @@
 				E36E3C1E18A928A2000CBA97 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E36E3C1F18A928A2000CBA97 /* Build configuration list for PBXNativeTarget "CSNNotificationObserverDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -490,6 +536,7 @@
 				E36E3C2118A928A2000CBA97 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

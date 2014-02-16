@@ -7,9 +7,25 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "OCMock.h"
+#import "CSNNotificationObserver.h"
+
+static NSString * const kTestNotificationName = @"testNotification";
+static NSString * const kTestAnotherNotificationName = @"testAnotherNotificationName";
+
+@interface SampleObserver : NSObject
+
+@end
+
+@implementation SampleObserver
+- (void)receiveNotification:(NSNotification *)notification
+{
+    NSLog(@"%s %@", __PRETTY_FUNCTION__, notification);
+}
+@end
 
 @interface CSNNotificationObserverDemoTests : XCTestCase
-
+@property (nonatomic ,strong) SampleObserver *sampleObserver;
 @end
 
 @implementation CSNNotificationObserverDemoTests
@@ -17,18 +33,163 @@
 - (void)setUp
 {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+    self.sampleObserver = [[SampleObserver alloc] init];
 }
 
 - (void)tearDown
 {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    self.sampleObserver = nil;
     [super tearDown];
 }
 
-- (void)testExample
+- (void)testRemoveObserverSelectorStyleWhenDeallocated
 {
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+    CSNNotificationObserver *observer = [[CSNNotificationObserver alloc] initWithObserver:self.sampleObserver selector:@selector(receiveNotification:) name:kTestNotificationName object:nil];
+    
+    id mock = [OCMockObject partialMockForObject:[NSNotificationCenter defaultCenter]];
+
+    [[mock expect] removeObserver:self.sampleObserver];
+  
+    observer = nil;
+    
+    [mock verify];
+}
+
+- (void)testRemoveObserverBlockStyleWhenDeallocated
+{
+    CSNNotificationObserver *observer = [[CSNNotificationObserver alloc] initWithName:kTestNotificationName object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        NSLog(@"%s %@", __PRETTY_FUNCTION__, notification);
+    }];
+    
+    id mock = [OCMockObject partialMockForObject:[NSNotificationCenter defaultCenter]];
+    
+    NSMutableDictionary *mappingDictionary = [observer valueForKey:@"mappingDictionary"];
+    for (id observer in [mappingDictionary allValues]) {
+        [[mock expect] removeObserver:observer];
+    }
+    
+    observer = nil;
+    
+    [mock verify];
+}
+
+- (void)testRemoveObserverNameObject
+{
+    CSNNotificationObserver *observer = [[CSNNotificationObserver alloc] initWithObserver:self.sampleObserver selector:@selector(receiveNotification:) name:kTestNotificationName object:nil];
+    
+    id mock = [OCMockObject partialMockForObject:[NSNotificationCenter defaultCenter]];
+    [[mock expect] removeObserver:self.sampleObserver name:kTestNotificationName object:nil];
+
+    [observer removeObserver:self.sampleObserver name:kTestNotificationName object:nil];
+    
+    [mock verify];
+}
+
+- (void)testRemoveObserver
+{
+    CSNNotificationObserver *observer = [[CSNNotificationObserver alloc] initWithName:kTestNotificationName object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        NSLog(@"%s %@", __PRETTY_FUNCTION__, notification);
+    }];
+
+    id mock = [OCMockObject partialMockForObject:[NSNotificationCenter defaultCenter]];
+
+    NSMutableDictionary *mappingDictionary = [observer valueForKey:@"mappingDictionary"];
+    for (NSString *key in [mappingDictionary allKeys]) {
+        if ([key isEqualToString:kTestNotificationName]) {
+            [[mock expect] removeObserver:[mappingDictionary objectForKey:key]];
+        }
+    }
+
+    [observer removeObserverByName:kTestNotificationName];
+    
+    [mock verify];
+}
+
+- (void)testInternalConditionMappingHashTable
+{
+    CSNNotificationObserver *observer = [[CSNNotificationObserver alloc] initWithObserver:self.sampleObserver selector:@selector(receiveNotification:) name:kTestNotificationName object:nil];
+
+    NSHashTable *hashTable = [observer valueForKey:@"mappingHashTable"];
+    XCTAssertEqual([hashTable count], (NSUInteger)1, @"hashTable Count shold be 1 right after addObserver");
+
+    [observer removeObserver:self.sampleObserver name:kTestNotificationName object:nil];
+
+    hashTable = [observer valueForKey:@"mappingHashTable"];
+    XCTAssertEqual([hashTable count], (NSUInteger)0, @"hashTable Count shold be 0 right after removeObserver");
+}
+
+- (void)testInternalConditionMappingDictionary
+{
+    CSNNotificationObserver *observer = [[CSNNotificationObserver alloc] initWithName:kTestNotificationName object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        NSLog(@"%s %@", __PRETTY_FUNCTION__, notification);
+    }];
+
+    NSMutableDictionary *mappingDictionary = [observer valueForKey:@"mappingDictionary"];
+    XCTAssertEqual([mappingDictionary count], (NSUInteger)1, @"hashTable Count shold be 1 right after addObserver");
+
+    [observer removeObserverByName:kTestNotificationName];
+    
+    mappingDictionary = [observer valueForKey:@"mappingDictionary"];
+    XCTAssertEqual([mappingDictionary count], (NSUInteger)0, @"hashTable Count shold be 0 right after removeObserver");
+}
+
+- (void)testReceiveNotificationSelectorStyle
+{
+    __unused CSNNotificationObserver *observer = [[CSNNotificationObserver alloc] initWithObserver:self.sampleObserver selector:@selector(receiveNotification:) name:kTestNotificationName object:nil];
+    
+    NSNotification *notification = [NSNotification notificationWithName:kTestNotificationName object:nil];
+    id mock = [OCMockObject partialMockForObject:self.sampleObserver];
+    [[mock expect] receiveNotification:notification];
+    
+    [[NSNotificationCenter defaultCenter] postNotification:notification];
+    
+    [mock verify];
+}
+
+- (void)testReceiveNotificationBlockStyle
+{
+    __unused CSNNotificationObserver *observer = [[CSNNotificationObserver alloc] initWithName:kTestNotificationName object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        NSLog(@"%s %@", __PRETTY_FUNCTION__, notification);
+        XCTAssertNotNil(notification, @"notification should not be nil");
+        XCTAssertEqualObjects(notification.name, kTestNotificationName, @"notification name should be equal %@", kTestNotificationName);
+    }];
+    
+    NSNotification *notification = [NSNotification notificationWithName:kTestNotificationName object:nil];
+    [[NSNotificationCenter defaultCenter] postNotification:notification];
+}
+
+- (void)testAddAndRemoveBlockStyle
+{
+    CSNNotificationObserver *observer = [[CSNNotificationObserver alloc] initWithName:kTestNotificationName object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        NSLog(@"%s %@", __PRETTY_FUNCTION__, notification);
+        XCTAssertNotNil(notification, @"notification should not be nil");
+        XCTAssertEqualObjects(notification.name, kTestNotificationName, @"notification name should be equal %@", kTestNotificationName);
+    }];
+    
+    [observer addObserverForName:kTestAnotherNotificationName object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        NSLog(@"%s %@", __PRETTY_FUNCTION__, notification);
+        XCTAssertNotNil(notification, @"notification should not be nil");
+        XCTAssertEqualObjects(notification.name, kTestAnotherNotificationName, @"notification name should be equal %@", kTestNotificationName);
+    }];
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kTestNotificationName object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kTestAnotherNotificationName object:nil];
+    
+    id mock = [OCMockObject partialMockForObject:[NSNotificationCenter defaultCenter]];
+    
+    NSMutableDictionary *mappingDictionary = [observer valueForKey:@"mappingDictionary"];
+    for (NSString *key in [mappingDictionary allKeys]) {
+        if ([key isEqualToString:kTestNotificationName]) {
+            [[mock expect] removeObserver:[mappingDictionary objectForKey:key]];
+        }
+    }
+    
+    [observer removeObserverByName:kTestNotificationName];
+    
+    [mock verify];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kTestAnotherNotificationName object:nil];
 }
 
 @end
