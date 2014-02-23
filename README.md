@@ -128,7 +128,7 @@ Especially useful when you choose block based notification observing. You don't 
 Use CocoaPods,
 
 ```ruby
-pod 'CSNNotificationObserver', :git => 'https://github.com/griffin-stewie/CSNNotificationObserver.git'
+pod 'CSNNotificationObserver', '~> 0.9.2'
 ```
 
 
