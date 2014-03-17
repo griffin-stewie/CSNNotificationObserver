@@ -2,7 +2,7 @@
 
 ## Overview
 
-Simple manage NotificationObserver inspired by cockscomb. you won't forget to remove notification.
+Simple manage NotificationObserver inspired by [cockscomb](https://github.com/cockscomb/CXCKeyValueObserver). you won't forget to remove notification.
 
 ## Requirements
 
@@ -122,6 +122,65 @@ Simple manage NotificationObserver inspired by cockscomb. you won't forget to re
 ```
 
 Especially useful when you choose block based notification observing. You don't need to have ivars, you need just 1 ivar, and it's automatically removed as observer when deallocated.
+
+## Caution
+
+following sample code does not work that you expect.
+
+```objc
+/// this method is called more than twice.
+- (void)addObserver
+{
+    self.notificationObserver = [[CSNNotificationObserver alloc] initWithObserver:self selector:@selector(respondsNotification:) name:@"SomeNotificationName" object:nil];
+}
+```
+
+Reason
+
+1. `initWithObserver:selector:name:object:` add observer to NSNotificationCenter
+2. returns new instance of `CSNNotificationObserver`
+3. `_notificationObserver` instance variable deallocate.
+4. remove observer from NSNotification.
+5. new instance of `CSNNotificationObserver` will be assign to `_notificationObserver`
+
+this is by design.
+
+
+### Workaround
+
+#### 1. Deallocate exist instance first.
+
+```objc
+/// this method is called more than twice.
+- (void)addObserver
+{
+    self.notificationObserver = nil;
+    self.notificationObserver = [[CSNNotificationObserver alloc] initWithObserver:self selector:@selector(respondsNotification:) name:@"SomeNotificationName" object:nil];
+}
+```
+
+#### 2. Separate initialize and adding observer.
+
+```objc
+/// this method is called more than twice.
+- (void)addObserver
+{
+    self.notificationObserver = [[CSNNotificationObserver alloc] init];
+    [self.notificationObserver addObserver:self selector:@selector(respondsNotification:) name:@"SomeNotificationName" object:nil];
+}
+```
+
+#### 3. Use block style
+
+```objc
+/// this method is called more than twice.
+- (void)addObserver
+{
+    self.notificationObserver = [[CSNNotificationObserver alloc] initWithName:@"SomeNotificationName" object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        [self respondsNotification:notification];
+    }];
+}
+```
 
 ## Install
 
