@@ -1,5 +1,8 @@
 # CSNNotificationObserver
 
+[![CocoaPods](http://img.shields.io/cocoapods/v/CSNNotificationObserver.svg)](http://cocoadocs.org/docsets/CSNNotificationObserver/)
+![](http://img.shields.io/badge/license-MIT-green.svg)
+
 ## Overview
 
 Simple manage NotificationObserver inspired by [cockscomb](https://github.com/cockscomb/CXCKeyValueObserver). you won't forget to remove notification.
